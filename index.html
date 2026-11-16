@@ -111,7 +111,7 @@
 <script>
 'use strict';
 // 部署 gas/Code.gs 後，把 Web App 網址貼在這裡（結尾為 /exec）。留空則維持模擬下單。
-const ORDER_ENDPOINT='';
+const ORDER_ENDPOINT='https://script.google.com/macros/s/AKfycbw3JZQ0Rd-xwBHGHFP1TQ1j5A53TihVcuDEQpHmrZcrKEKClz9nSV8FI5nJ1HThJwmBTA/exec';
 let submitting=false;
 const image=(id)=>`https://images.unsplash.com/${id}?auto=format&fit=crop&w=900&q=85`;
 const products=[
@@ -131,7 +131,7 @@ const products=[
 ];
 const categories=[['鍋貼','招牌鍋貼'],['水餃','精選水餃'],['湯飲','湯品 / 飲料'],['小菜','經典小菜']];
 const stores=[{name:'台北旗艦店',short:'旗艦店',address:'台北市中正區忠孝西路一段 49 號（示範地址）',phone:'02-0000-0000',hours:'每日 11:00–21:00',map:'台北車站'},{name:'信義概念店',short:'信義店',address:'台北市信義區松壽路 20 號（示範地址）',phone:'02-0000-0000',hours:'每日 11:30–21:30',map:'台北101'}];
-const faqs=[['如何線上點餐？','選擇餐點並加入購物車，點擊「前往結帳」即可體驗模擬下單流程。展示網站尚未串接真實訂單系統。'],['冷凍鍋貼如何保存？','建議依正式商品包裝標示的冷凍溫度、保存期限與加熱方式操作。展示版尚無經驗證的保存期限資訊。'],['可以使用外送平台嗎？','網站展示 Uber Eats 與 foodpanda 兩種平台，實際合作門市與配送範圍需於正式營運時確認。'],['可以選擇內用、外帶或宅配嗎？','模擬結帳支援三種選項；正式服務是否開放、運費及配送條件須以門市公告為準。']];
+const faqs=[['如何線上點餐？','選擇餐點並加入購物車，點擊「前往結帳」填寫聯絡資料後送出。門市收到訂單會與您聯繫確認，付款於取餐或到貨時進行。'],['冷凍鍋貼如何保存？','建議依正式商品包裝標示的冷凍溫度、保存期限與加熱方式操作。展示版尚無經驗證的保存期限資訊。'],['可以使用外送平台嗎？','網站展示 Uber Eats 與 foodpanda 兩種平台，實際合作門市與配送範圍需於正式營運時確認。'],['可以選擇內用、外帶或宅配嗎？','模擬結帳支援三種選項；正式服務是否開放、運費及配送條件須以門市公告為準。']];
 const $=(s)=>document.querySelector(s), $$=(s)=>document.querySelectorAll(s), money=(n)=>`NT$ ${n.toLocaleString('zh-TW')}`;
 let cart={};try{const saved=JSON.parse(localStorage.getItem('guocui-cart')||'{}');if(saved&&typeof saved==='object'&&!Array.isArray(saved)){for(const [id,q] of Object.entries(saved)){if(products.some(p=>p.id===id)&&Number.isInteger(q)&&q>0&&q<=99)cart[id]=q;}}}catch(e){cart={}}
 let currentCategory='鍋貼', currentStore=0, toastTimer, lastFocus=null;
