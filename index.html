@@ -2,6 +2,7 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#38291f">
+<link rel="manifest" href="manifest.webmanifest"><link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png"><link rel="apple-touch-icon" href="icons/apple-touch-icon.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="鍋淬">
 <meta name="description" content="鍋淬 GUOCUI｜金黃酥脆，手作的溫度。探索現煎鍋貼、精選水餃與冷凍禮盒。">
 <title>鍋淬 GUOCUI｜一口金黃，一份講究</title>
 <script src="https://cdn.tailwindcss.com"></script>
@@ -30,7 +31,7 @@
 @keyframes street-bob{from{transform:translateY(0)}to{transform:translateY(-2px)}}
 @keyframes street-bob-reverse{from{transform:scaleX(-1) translateY(0)}to{transform:scaleX(-1) translateY(-2px)}}
 @media(max-width:767px){.hero>.container-wide{padding-bottom:140px}.hero-crowd{height:95px}.street-walker{width:45px;height:72px}.street-walker.distant{width:32px;height:52px}}
-@media(prefers-reduced-motion:reduce){.street-walker,.walker-figure,.walker-limb{animation:none!important}.street-walker,.street-walker.reverse{right:auto}.street-walker:nth-child(1){left:12%}.street-walker:nth-child(2){left:30%}.street-walker:nth-child(3){left:46%}.street-walker:nth-child(4){left:63%}.street-walker:nth-child(5){left:78%}.street-walker:nth-child(6){left:90%}.reverse .walker-figure{transform:scaleX(-1)}}
+
 </style>
 </head>
 <body>
@@ -161,5 +162,6 @@ function closePrivacy(){$('#privacyModal').classList.add('hidden');$('#privacyMo
 $('#privacyButton').addEventListener('click',()=>{$('#privacyModal').classList.remove('hidden');$('#privacyModal').classList.add('flex');lockScroll();$('#privacyClose').focus()});$('#privacyClose').addEventListener('click',closePrivacy);$('#privacyDone').addEventListener('click',closePrivacy);$('#privacyModal').addEventListener('click',e=>{if(e.target.id==='privacyModal')closePrivacy()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!$('#privacyModal').classList.contains('hidden'))closePrivacy();else if(!$('#checkoutModal').classList.contains('hidden'))closeCheckout();else if($('#cartDrawer').classList.contains('open'))closeCart()}if(e.key==='Tab'){const dialog=!$('#privacyModal').classList.contains('hidden')?$('#privacyModal'):!$('#checkoutModal').classList.contains('hidden')?$('#checkoutModal'):$('#cartDrawer').classList.contains('open')?$('#cartDrawer'):null;if(!dialog)return;const els=[...dialog.querySelectorAll('button:not(:disabled),input:not(:disabled),select:not(:disabled),a[href]')].filter(x=>x.getClientRects().length);if(!els.length)return;const first=els[0],last=els[els.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}});
 $('#year').textContent=new Date().getFullYear();renderMenu();renderStores();renderFaq();updateCart();if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',icons);else icons();window.addEventListener('load',icons);
+if('serviceWorker' in navigator&&location.protocol!=='file:')window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
 </script>
 </body></html>
