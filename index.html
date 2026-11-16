@@ -11,6 +11,26 @@
 <style>
 :root{--brown:#38291f;--orange:#b76b38;--cream:#faf6ef;--line:#e8dfd3}html{scroll-behavior:smooth;scroll-padding-top:86px}body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--brown)}h1,h2,h3,.serif{font-family:'Noto Serif TC',serif}button,a,input,select{outline-offset:3px}button{cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}.container-wide{max-width:1240px;margin:auto;padding-left:24px;padding-right:24px}.btn-primary{background:var(--brown);color:white;padding:13px 22px;border-radius:4px;transition:.2s}.btn-primary:hover{background:#65452e}.btn-light{background:#fff;color:var(--brown);padding:13px 22px;border-radius:4px}.btn-outline{border:1px solid currentColor;padding:12px 21px;border-radius:4px}.section-kicker{color:var(--orange);letter-spacing:.2em;font-size:12px;font-weight:700}.hero{background-image:linear-gradient(90deg,rgba(22,16,12,.83),rgba(22,16,12,.44) 55%,rgba(22,16,12,.12)),url('https://i.postimg.cc/j2YmMLV1/Chat-GPT-Image-2026nian8yue9ri-xia-wu06-20-57.png');background-position:center;background-size:cover}.food-image{height:220px;width:100%;object-fit:cover}.tab.active{background:var(--brown);color:#fff;border-color:var(--brown)}.drawer{transform:translateX(100%);transition:transform .3s ease}.drawer.open{transform:translateX(0)}.overlay{opacity:0;pointer-events:none;transition:opacity .3s}.overlay.open{opacity:1;pointer-events:auto}.toast{transform:translateY(20px);opacity:0;transition:.25s;pointer-events:none}.toast.show{transform:translateY(0);opacity:1}.faq-answer{display:none}.faq-item.open .faq-answer{display:block}.faq-item.open .faq-chevron{transform:rotate(180deg)}.field{border:1px solid #d8cbbd;border-radius:4px;background:#fff;padding:11px 12px;width:100%;min-width:0}.field:focus{outline:2px solid #b76b38;outline-offset:1px}.no-scroll{overflow:hidden}@media(max-width:767px){.hero{background-position:58% center}.food-image{height:185px}}
 .booking-fab{position:fixed;right:calc(20px + env(safe-area-inset-right,0px));bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:45;display:inline-flex;align-items:center;gap:8px;min-height:52px;padding:14px 22px;border:1px solid #e8dfd3;border-radius:999px;background:var(--brown);color:#fff;font-size:16px;font-weight:600;text-decoration:none;box-shadow:0 6px 24px #38291f40;transition:background .2s,box-shadow .2s}.booking-fab:hover{background:#65452e;box-shadow:0 8px 28px #38291f55}.booking-fab:focus-visible{outline:3px solid var(--orange);outline-offset:4px}.booking-fab svg{width:22px;height:22px;flex-shrink:0}body{padding-bottom:calc(88px + env(safe-area-inset-bottom,0px))}
+
+/* Decorative street scene beneath the hero content. */
+.hero{position:relative;isolation:isolate;overflow:hidden}
+.hero>.container-wide{position:relative;z-index:1;padding-bottom:160px}
+.hero-crowd{position:absolute;inset:auto 0 0;height:110px;pointer-events:none;overflow:hidden;z-index:0;background:linear-gradient(transparent,rgba(22,16,12,.35))}
+.hero-crowd::after{content:"";position:absolute;bottom:10px;left:0;right:0;height:1px;background:rgba(244,198,158,.2)}
+.street-walker{position:absolute;left:-80px;bottom:10px;width:54px;height:86px;color:var(--coat,#d6ac83);animation:street-cross var(--duration,22s) linear infinite;animation-delay:var(--delay,0s)}
+.street-walker.reverse{left:auto;right:-80px;animation-name:street-return}
+.walker-figure{width:100%;height:100%;overflow:visible;animation:street-bob .65s ease-in-out infinite alternate}
+.reverse .walker-figure{transform:scaleX(-1);animation-name:street-bob-reverse}
+.walker-limb{transform-box:fill-box;transform-origin:50% 0;animation:street-step .65s ease-in-out infinite alternate}
+.walker-limb.opposite{animation-direction:alternate-reverse}
+.street-walker.distant{width:38px;height:62px;bottom:18px;opacity:.5}
+@keyframes street-cross{to{transform:translateX(calc(100vw + 160px))}}
+@keyframes street-return{to{transform:translateX(calc(-100vw - 160px))}}
+@keyframes street-step{from{transform:rotate(-24deg)}to{transform:rotate(24deg)}}
+@keyframes street-bob{from{transform:translateY(0)}to{transform:translateY(-2px)}}
+@keyframes street-bob-reverse{from{transform:scaleX(-1) translateY(0)}to{transform:scaleX(-1) translateY(-2px)}}
+@media(max-width:767px){.hero>.container-wide{padding-bottom:140px}.hero-crowd{height:95px}.street-walker{width:45px;height:72px}.street-walker.distant{width:32px;height:52px}}
+@media(prefers-reduced-motion:reduce){.hero-crowd{display:none}}
 </style>
 </head>
 <body>
@@ -21,7 +41,56 @@
  <nav id="mobileNav" class="hidden lg:hidden px-6 pb-5 border-t border-[#e8dfd3] bg-[#faf6ef]" aria-label="手機導覽"><div class="grid grid-cols-2 gap-4 pt-4 text-sm"><a href="#story">品牌故事</a><a href="#menu">熱門餐點</a><a href="#menu">線上點餐</a><a href="#gifts">冷凍禮盒</a><a href="#locations">門市據點</a><a href="#contact">聯絡我們</a></div></nav>
 </header>
 <main id="home">
-<section class="hero min-h-[600px] md:min-h-[680px] flex items-center text-white"><div class="container-wide w-full py-24"><p class="text-sm tracking-[.35em] text-[#f4c69e] mb-6">CRAFTED WITH CARE · SERVED WITH HEART</p><h1 class="text-4xl sm:text-5xl md:text-6xl leading-[1.4] font-semibold max-w-[760px]">金黃酥脆，<br>傳承手藝的極致美味。</h1><p class="mt-6 max-w-lg leading-8 text-white/85">從一張麵皮、一份鮮餡，到鍋底的金黃酥香。<br class="hidden sm:block">每一口，都是對好味道的堅持。</p><div class="mt-10 flex flex-wrap gap-3"><a href="#menu" class="btn-light">線上點餐 <span aria-hidden="true">→</span></a><a href="#locations" class="btn-outline text-white">探索門市</a></div></div></section>
+<section class="hero min-h-[600px] md:min-h-[680px] flex items-center text-white"><div class="container-wide w-full py-24"><p class="text-sm tracking-[.35em] text-[#f4c69e] mb-6">CRAFTED WITH CARE · SERVED WITH HEART</p><h1 class="text-4xl sm:text-5xl md:text-6xl leading-[1.4] font-semibold max-w-[760px]">金黃酥脆，<br>傳承手藝的極致美味。</h1><p class="mt-6 max-w-lg leading-8 text-white/85">從一張麵皮、一份鮮餡，到鍋底的金黃酥香。<br class="hidden sm:block">每一口，都是對好味道的堅持。</p><div class="mt-10 flex flex-wrap gap-3"><a href="#menu" class="btn-light">線上點餐 <span aria-hidden="true">→</span></a><a href="#locations" class="btn-outline text-white">探索門市</a></div></div><div class="hero-crowd" aria-hidden="true">
+ <span class="street-walker distant" style="--duration:30s;--delay:-7s;--coat:#b5a18f"><svg class="walker-figure" viewBox="0 0 54 86" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path class="walker-limb opposite" d="M27 49L22 65L15 80" stroke="#887365" stroke-width="7" stroke-linecap="round"/>
+  <path class="walker-limb" d="M26 49L32 66L39 80" stroke="#b29a83" stroke-width="7" stroke-linecap="round"/>
+  <path class="walker-limb" d="M25 29L16 42L11 53" stroke="#c9a27f" stroke-width="5" stroke-linecap="round"/>
+  <path d="M26 23C19 23 18 32 18 39L17 53H35L33 33C32 26 31 23 26 23Z" fill="currentColor"/>
+  <circle cx="27" cy="13" r="8" fill="#dab590"/><path d="M19 13C16 1 36 1 35 13L29 8L19 13Z" fill="#49372b"/>
+  <path class="walker-limb opposite" d="M30 29L35 42L42 49" stroke="#dab590" stroke-width="5" stroke-linecap="round"/>
+ </svg></span>
+ <span class="street-walker distant reverse" style="--duration:34s;--delay:-20s;--coat:#c7b8a5"><svg class="walker-figure" viewBox="0 0 54 86" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path class="walker-limb opposite" d="M27 49L22 65L15 80" stroke="#887365" stroke-width="7" stroke-linecap="round"/>
+  <path class="walker-limb" d="M26 49L32 66L39 80" stroke="#b29a83" stroke-width="7" stroke-linecap="round"/>
+  <path class="walker-limb" d="M25 29L16 42L11 53" stroke="#c9a27f" stroke-width="5" stroke-linecap="round"/>
+  <path d="M26 23C19 23 18 32 18 39L17 53H35L33 33C32 26 31 23 26 23Z" fill="currentColor"/>
+  <circle cx="27" cy="13" r="8" fill="#dab590"/><path d="M19 13C16 1 36 1 35 13L29 8L19 13Z" fill="#49372b"/>
+  <path class="walker-limb opposite" d="M30 29L35 42L42 49" stroke="#dab590" stroke-width="5" stroke-linecap="round"/>
+ </svg></span>
+ <span class="street-walker " style="--duration:22s;--delay:-3s;--coat:#d6ac83"><svg class="walker-figure" viewBox="0 0 54 86" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path class="walker-limb opposite" d="M27 49L22 65L15 80" stroke="#887365" stroke-width="7" stroke-linecap="round"/>
+  <path class="walker-limb" d="M26 49L32 66L39 80" stroke="#b29a83" stroke-width="7" stroke-linecap="round"/>
+  <path class="walker-limb" d="M25 29L16 42L11 53" stroke="#c9a27f" stroke-width="5" stroke-linecap="round"/>
+  <path d="M26 23C19 23 18 32 18 39L17 53H35L33 33C32 26 31 23 26 23Z" fill="currentColor"/>
+  <circle cx="27" cy="13" r="8" fill="#dab590"/><path d="M19 13C16 1 36 1 35 13L29 8L19 13Z" fill="#49372b"/>
+  <path class="walker-limb opposite" d="M30 29L35 42L42 49" stroke="#dab590" stroke-width="5" stroke-linecap="round"/>
+ </svg></span>
+ <span class="street-walker reverse" style="--duration:26s;--delay:-13s;--coat:#c38c62"><svg class="walker-figure" viewBox="0 0 54 86" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path class="walker-limb opposite" d="M27 49L22 65L15 80" stroke="#887365" stroke-width="7" stroke-linecap="round"/>
+  <path class="walker-limb" d="M26 49L32 66L39 80" stroke="#b29a83" stroke-width="7" stroke-linecap="round"/>
+  <path class="walker-limb" d="M25 29L16 42L11 53" stroke="#c9a27f" stroke-width="5" stroke-linecap="round"/>
+  <path d="M26 23C19 23 18 32 18 39L17 53H35L33 33C32 26 31 23 26 23Z" fill="currentColor"/>
+  <circle cx="27" cy="13" r="8" fill="#dab590"/><path d="M19 13C16 1 36 1 35 13L29 8L19 13Z" fill="#49372b"/>
+  <path class="walker-limb opposite" d="M30 29L35 42L42 49" stroke="#dab590" stroke-width="5" stroke-linecap="round"/>
+ </svg></span>
+ <span class="street-walker " style="--duration:28s;--delay:-18s;--coat:#e3c8a3"><svg class="walker-figure" viewBox="0 0 54 86" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path class="walker-limb opposite" d="M27 49L22 65L15 80" stroke="#887365" stroke-width="7" stroke-linecap="round"/>
+  <path class="walker-limb" d="M26 49L32 66L39 80" stroke="#b29a83" stroke-width="7" stroke-linecap="round"/>
+  <path class="walker-limb" d="M25 29L16 42L11 53" stroke="#c9a27f" stroke-width="5" stroke-linecap="round"/>
+  <path d="M26 23C19 23 18 32 18 39L17 53H35L33 33C32 26 31 23 26 23Z" fill="currentColor"/>
+  <circle cx="27" cy="13" r="8" fill="#dab590"/><path d="M19 13C16 1 36 1 35 13L29 8L19 13Z" fill="#49372b"/>
+  <path class="walker-limb opposite" d="M30 29L35 42L42 49" stroke="#dab590" stroke-width="5" stroke-linecap="round"/>
+ </svg></span>
+ <span class="street-walker reverse" style="--duration:24s;--delay:-22s;--coat:#ab9d8d"><svg class="walker-figure" viewBox="0 0 54 86" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path class="walker-limb opposite" d="M27 49L22 65L15 80" stroke="#887365" stroke-width="7" stroke-linecap="round"/>
+  <path class="walker-limb" d="M26 49L32 66L39 80" stroke="#b29a83" stroke-width="7" stroke-linecap="round"/>
+  <path class="walker-limb" d="M25 29L16 42L11 53" stroke="#c9a27f" stroke-width="5" stroke-linecap="round"/>
+  <path d="M26 23C19 23 18 32 18 39L17 53H35L33 33C32 26 31 23 26 23Z" fill="currentColor"/>
+  <circle cx="27" cy="13" r="8" fill="#dab590"/><path d="M19 13C16 1 36 1 35 13L29 8L19 13Z" fill="#49372b"/>
+  <path class="walker-limb opposite" d="M30 29L35 42L42 49" stroke="#dab590" stroke-width="5" stroke-linecap="round"/>
+ </svg></span>
+</div></section>
 <section id="story" class="py-20 md:py-28"><div class="container-wide grid md:grid-cols-2 gap-12 md:gap-20 items-center"><div class="relative"><img class="rounded-md w-full h-[390px] md:h-[520px] object-cover" src="https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=1100&q=85" alt="溫暖質感的餐廳用餐空間" loading="lazy"><div class="absolute -bottom-5 right-5 bg-[#38291f] text-white p-5 shadow-xl"><span class="serif text-2xl">手作 · 真味</span><p class="text-xs mt-2 tracking-widest">THE ART OF SIMPLE FOOD</p></div></div><div><p class="section-kicker mb-4">OUR STORY</p><h2 class="text-3xl md:text-4xl leading-snug">讓平凡的一餐，<br>成為值得期待的日常。</h2><p class="mt-7 leading-8 text-[#746457]">鍋淬相信，美味不需要複雜。以在地食材與細膩手藝，將鍋貼最動人的滋味留在餐桌上。從餡料比例到火候掌握，我們講究每一道細節，只為端出外酥內嫩的好味道。</p><div class="grid sm:grid-cols-3 gap-5 mt-8 text-sm"><div><i data-lucide="leaf" class="text-[#b76b38] mb-3"></i><strong>在地嚴選</strong><p class="text-[#84766a] mt-2">選用台灣在地豬肉</p></div><div><i data-lucide="hand-heart" class="text-[#b76b38] mb-3"></i><strong>每日手作</strong><p class="text-[#84766a] mt-2">用心包製新鮮風味</p></div><div><i data-lucide="flame" class="text-[#b76b38] mb-3"></i><strong>黃金火候</strong><p class="text-[#84766a] mt-2">煎出酥香金黃底皮</p></div></div></div></div><div class="container-wide mt-20 grid grid-cols-3 gap-4 border-t border-b border-[#e8dfd3] py-8 text-center"><div><p class="serif text-2xl md:text-4xl">10,000<span class="text-lg">+</span></p><p class="text-xs md:text-sm text-[#84766a] mt-2">每日售出顆數*</p></div><div class="border-x border-[#e8dfd3]"><p class="serif text-2xl md:text-4xl">100%</p><p class="text-xs md:text-sm text-[#84766a] mt-2">現點現煎*</p></div><div><p class="serif text-2xl md:text-4xl">30<span class="text-lg">年</span></p><p class="text-xs md:text-sm text-[#84766a] mt-2">工藝傳承*</p></div></div><p class="container-wide text-xs text-[#988a7d] mt-3">*以上數字為網站設計示範資料，正式上線前請替換為實際營運數據。</p></section>
 <section id="menu" class="py-20 bg-white"><div class="container-wide"><div class="text-center"><p class="section-kicker mb-3">OUR MENU</p><h2 class="text-3xl md:text-4xl">每一口，都是講究</h2><p class="mt-4 text-[#84766a]">選擇喜歡的餐點，將好味道加入購物車。</p></div><div id="menuTabs" class="flex gap-2 overflow-x-auto py-8 mt-3 justify-start md:justify-center" role="tablist" aria-label="菜單分類"></div><div id="menuGrid" class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6" aria-live="polite"></div></div></section>
 <section id="gifts" class="py-20 md:py-28"><div class="container-wide grid md:grid-cols-2 gap-10 md:gap-16 items-center"><div class="order-2 md:order-1"><p class="section-kicker mb-4">FROZEN COLLECTION</p><h2 class="text-3xl md:text-4xl leading-snug">把職人好味道，<br>帶回家的餐桌。</h2><p class="mt-6 text-[#746457] leading-8">招牌招財鍋貼禮盒，50 顆滿載心意。無論家常聚餐、節慶送禮，都能分享酥香美味。</p><div class="mt-6 space-y-3 text-sm"><p class="flex items-center gap-3"><i data-lucide="snowflake" class="w-5 text-[#b76b38]"></i>急速冷凍鎖住鮮味（示範產品設定）</p><p class="flex items-center gap-3"><i data-lucide="clock-3" class="w-5 text-[#b76b38]"></i>約 8 分鐘料理提案，依包裝說明加熱</p><p class="flex items-center gap-3"><i data-lucide="gift" class="w-5 text-[#b76b38]"></i>家庭共享與節慶送禮皆適宜</p></div><p class="serif text-3xl mt-8">NT$ 680 <span class="text-sm text-[#84766a] font-normal">/ 50 入</span></p><button id="giftAdd" class="btn-primary mt-5">加入購物車 <span aria-hidden="true">＋</span></button></div><div class="order-1 md:order-2 relative"><img src="https://images.unsplash.com/photo-1541696432-82c6da8ce7bf?auto=format&fit=crop&w=1200&q=85" class="w-full h-[370px] md:h-[510px] object-cover rounded-md" alt="手工餃類美食擺盤" loading="lazy"><div class="absolute top-5 left-5 bg-[#faf6ef] text-[#38291f] px-4 py-2 text-xs tracking-widest">THE PERFECT GIFT</div></div></div></section>
