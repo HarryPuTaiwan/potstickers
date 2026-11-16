@@ -1,345 +1,91 @@
-<!DOCTYPE html>
-<html lang="zh-TW">
+<!doctype html>
+<html lang="zh-Hant">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AI3 南港美食 3D 午餐選擇器</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#38291f">
+<meta name="description" content="鍋淬 GUOCUI｜金黃酥脆，手作的溫度。探索現煎鍋貼、精選水餃與冷凍禮盒。">
+<title>鍋淬 GUOCUI｜一口金黃，一份講究</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
+<link rel="preconnect" href="https://images.unsplash.com"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Noto+Serif+TC:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { width: 100%; height: 100%; overflow: hidden;
-    font-family: "Noto Sans TC", "Microsoft JhengHei", "PingFang TC", system-ui, sans-serif;
-    background: radial-gradient(ellipse at 50% 40%, #2a2f5c 0%, #12142b 70%); color: #fff; }
-  #canvas-container { position: absolute; inset: 0; z-index: 0; }
-  #canvas-container canvas { display: block; }
-
-  .glass { background: rgba(255,255,255,.10); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-    border: 1px solid rgba(255,255,255,.22); box-shadow: 0 8px 32px rgba(0,0,0,.35); }
-
-  #header { position: absolute; top: 0; left: 0; right: 0; z-index: 2; padding: 14px 24px;
-    font-size: 20px; font-weight: 700; letter-spacing: 1px; border-radius: 0 0 16px 16px; }
-  #header small { font-weight: 400; opacity: .7; margin-left: 12px; font-size: 13px; }
-
-  #ui-container { position: absolute; top: 76px; left: 20px; z-index: 2; width: 280px;
-    padding: 18px; border-radius: 18px; max-height: calc(100% - 96px); overflow-y: auto; }
-  #ui-container h3 { font-size: 14px; margin: 14px 0 8px; color: #ffd36b; }
-  #ui-container h3:first-child { margin-top: 0; }
-  label.opt { display: flex; align-items: center; gap: 8px; padding: 5px 0; cursor: pointer; font-size: 15px; }
-  label.opt input { accent-color: #ffb400; width: 16px; height: 16px; }
-  .cat-grid { display: grid; grid-template-columns: 1fr 1fr; column-gap: 8px; }
-  #count { margin: 14px 0 10px; font-size: 14px; opacity: .9; }
-  #count b { color: #ffd36b; font-size: 20px; }
-  #warn { color: #ff8a8a; font-size: 13px; min-height: 18px; margin-bottom: 6px; }
-
-  button { font-family: inherit; cursor: pointer; border: 0; border-radius: 12px; font-size: 16px; font-weight: 700;
-    padding: 12px 16px; transition: transform .12s, opacity .12s; }
-  button:active:not(:disabled) { transform: scale(.97); }
-  button:disabled { opacity: .4; cursor: not-allowed; }
-  .btn-main { width: 100%; background: linear-gradient(135deg, #ffb400, #ff6a3d); color: #2b1600; font-size: 18px; }
-  .btn-sub { background: rgba(255,255,255,.18); color: #fff; }
-  .btn-map { background: #34a853; color: #fff; text-decoration: none; display: block; text-align: center;
-    padding: 12px 16px; border-radius: 12px; font-weight: 700; }
-
-  #result-modal { position: absolute; inset: 0; z-index: 5; display: flex; align-items: center; justify-content: center;
-    background: rgba(5,6,20,.55); }
-  #result-modal.hidden { display: none; }
-  .card { width: min(92vw, 420px); padding: 28px; border-radius: 22px; text-align: center;
-    background: rgba(30,34,74,.92); border: 1px solid rgba(255,255,255,.25); animation: pop .35s ease-out; }
-  @keyframes pop { from { transform: scale(.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-  .card .emoji { font-size: 44px; }
-  .card h2 { font-size: 28px; margin: 6px 0 4px; color: #ffd36b; }
-  .card .dist { font-size: 16px; opacity: .9; margin-bottom: 12px; }
-  .tags { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin-bottom: 18px; }
-  .tag { background: rgba(255,255,255,.16); border-radius: 999px; padding: 4px 12px; font-size: 13px; }
-  .actions { display: flex; flex-direction: column; gap: 10px; }
-
-  #hint { position: absolute; bottom: 14px; left: 0; right: 0; text-align: center; z-index: 1; font-size: 12px; opacity: .55; pointer-events: none; }
-
-  @media (max-width: 760px) {
-    #ui-container { top: auto; bottom: 0; left: 0; right: 0; width: 100%; max-height: 52%; border-radius: 18px 18px 0 0; }
-    #header { font-size: 16px; } #header small { display: none; }
-  }
+:root{--brown:#38291f;--orange:#b76b38;--cream:#faf6ef;--line:#e8dfd3}html{scroll-behavior:smooth;scroll-padding-top:86px}body{font-family:'Noto Sans TC',sans-serif;background:var(--cream);color:var(--brown)}h1,h2,h3,.serif{font-family:'Noto Serif TC',serif}button,a,input,select{outline-offset:3px}button{cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}.container-wide{max-width:1240px;margin:auto;padding-left:24px;padding-right:24px}.btn-primary{background:var(--brown);color:white;padding:13px 22px;border-radius:4px;transition:.2s}.btn-primary:hover{background:#65452e}.btn-light{background:#fff;color:var(--brown);padding:13px 22px;border-radius:4px}.btn-outline{border:1px solid currentColor;padding:12px 21px;border-radius:4px}.section-kicker{color:var(--orange);letter-spacing:.2em;font-size:12px;font-weight:700}.hero{background-image:linear-gradient(90deg,rgba(22,16,12,.83),rgba(22,16,12,.44) 55%,rgba(22,16,12,.12)),url('https://images.unsplash.com/photo-1563245372-f21724e3856d?auto=format&fit=crop&w=2200&q=85');background-position:center;background-size:cover}.food-image{height:220px;width:100%;object-fit:cover}.tab.active{background:var(--brown);color:#fff;border-color:var(--brown)}.drawer{transform:translateX(100%);transition:transform .3s ease}.drawer.open{transform:translateX(0)}.overlay{opacity:0;pointer-events:none;transition:opacity .3s}.overlay.open{opacity:1;pointer-events:auto}.toast{transform:translateY(20px);opacity:0;transition:.25s;pointer-events:none}.toast.show{transform:translateY(0);opacity:1}.faq-answer{display:none}.faq-item.open .faq-answer{display:block}.faq-item.open .faq-chevron{transform:rotate(180deg)}.field{border:1px solid #d8cbbd;border-radius:4px;background:#fff;padding:11px 12px;width:100%;min-width:0}.field:focus{outline:2px solid #b76b38;outline-offset:1px}.no-scroll{overflow:hidden}@media(max-width:767px){.hero{background-position:58% center}.food-image{height:185px}}
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
-  <div id="canvas-container"></div>
-
-  <div id="header" class="glass">🍜 AI3 南港午餐 3D 決策器<small>以 AI3（南港軟體園區・三重路）為中心，半徑 2 公里</small></div>
-
-  <div id="ui-container" class="glass">
-    <h3>距離選擇</h3>
-    <label class="opt"><input type="radio" name="dist" value="500">500 公尺以內</label>
-    <label class="opt"><input type="radio" name="dist" value="1000">1 公里以內</label>
-    <label class="opt"><input type="radio" name="dist" value="2000" checked>2 公里以內</label>
-
-    <h3>環境條件</h3>
-    <label class="opt"><input type="checkbox" id="ac" checked>必須有冷氣</label>
-
-    <h3>種類（複選）</h3>
-    <div class="cat-grid" id="cats"></div>
-
-    <div id="count"></div>
-    <div id="warn"></div>
-    <button class="btn-main" id="spin-btn">🎲 決定吃什麼</button>
-  </div>
-
-  <div id="result-modal" class="hidden">
-    <div class="card">
-      <div class="emoji">🎉</div>
-      <h2 id="r-name"></h2>
-      <div class="dist" id="r-dist"></div>
-      <div class="tags" id="r-tags"></div>
-      <div class="actions">
-        <a class="btn-map" id="r-map" target="_blank" rel="noopener">📍 開啟 Google 地圖導航</a>
-        <button class="btn-sub" id="r-again">🔁 不滿意，再抽一次</button>
-        <button class="btn-sub" id="r-filter">⚙️ 重新篩選</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="hint">拖曳可旋轉輪盤視角</div>
-
+<header class="sticky top-0 z-40 bg-[#faf6ef]/95 backdrop-blur border-b border-[#e8dfd3]">
+ <div class="container-wide h-[76px] flex items-center justify-between gap-4"><a href="#home" class="flex items-center gap-3 shrink-0" aria-label="鍋淬首頁"><span class="w-10 h-10 rounded-full bg-[#38291f] text-white flex items-center justify-center serif text-xl">淬</span><span class="leading-tight"><strong class="block serif text-xl tracking-[.2em]">鍋淬</strong><small class="text-[10px] tracking-[.32em]">GUOCUI</small></span></a>
+ <nav class="hidden lg:flex items-center gap-6 text-sm" aria-label="主要導覽"><a class="hover:text-[#b76b38]" href="#story">品牌故事</a><a class="hover:text-[#b76b38]" href="#menu">熱門餐點</a><a class="hover:text-[#b76b38]" href="#menu">線上點餐</a><a class="hover:text-[#b76b38]" href="#gifts">冷凍禮盒</a><a class="hover:text-[#b76b38]" href="#locations">門市據點</a><a class="hover:text-[#b76b38]" href="#contact">聯絡我們</a></nav>
+ <div class="flex items-center gap-2 sm:gap-4"><button type="button" id="cartTrigger" class="relative p-2" aria-label="開啟購物車"><i data-lucide="shopping-bag" class="w-6 h-6"></i><span id="cartCount" class="absolute -top-1 -right-1 bg-[#b76b38] text-white text-[10px] min-w-5 h-5 px-1 rounded-full flex items-center justify-center">0</span></button><a href="#menu" class="btn-primary hidden sm:inline-block text-sm">立即點餐</a><button id="mobileToggle" class="lg:hidden p-2" aria-label="開啟導覽選單" aria-expanded="false"><i data-lucide="menu"></i></button></div></div>
+ <nav id="mobileNav" class="hidden lg:hidden px-6 pb-5 border-t border-[#e8dfd3] bg-[#faf6ef]" aria-label="手機導覽"><div class="grid grid-cols-2 gap-4 pt-4 text-sm"><a href="#story">品牌故事</a><a href="#menu">熱門餐點</a><a href="#menu">線上點餐</a><a href="#gifts">冷凍禮盒</a><a href="#locations">門市據點</a><a href="#contact">聯絡我們</a></div></nav>
+</header>
+<main id="home">
+<section class="hero min-h-[600px] md:min-h-[680px] flex items-center text-white"><div class="container-wide w-full py-24"><p class="text-sm tracking-[.35em] text-[#f4c69e] mb-6">CRAFTED WITH CARE · SERVED WITH HEART</p><h1 class="text-4xl sm:text-5xl md:text-6xl leading-[1.4] font-semibold max-w-[760px]">金黃酥脆，<br>傳承手藝的極致美味。</h1><p class="mt-6 max-w-lg leading-8 text-white/85">從一張麵皮、一份鮮餡，到鍋底的金黃酥香。<br class="hidden sm:block">每一口，都是對好味道的堅持。</p><div class="mt-10 flex flex-wrap gap-3"><a href="#menu" class="btn-light">線上點餐 <span aria-hidden="true">→</span></a><a href="#locations" class="btn-outline text-white">探索門市</a></div></div></section>
+<section id="story" class="py-20 md:py-28"><div class="container-wide grid md:grid-cols-2 gap-12 md:gap-20 items-center"><div class="relative"><img class="rounded-md w-full h-[390px] md:h-[520px] object-cover" src="https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=1100&q=85" alt="溫暖質感的餐廳用餐空間" loading="lazy"><div class="absolute -bottom-5 right-5 bg-[#38291f] text-white p-5 shadow-xl"><span class="serif text-2xl">手作 · 真味</span><p class="text-xs mt-2 tracking-widest">THE ART OF SIMPLE FOOD</p></div></div><div><p class="section-kicker mb-4">OUR STORY</p><h2 class="text-3xl md:text-4xl leading-snug">讓平凡的一餐，<br>成為值得期待的日常。</h2><p class="mt-7 leading-8 text-[#746457]">鍋淬相信，美味不需要複雜。以在地食材與細膩手藝，將鍋貼最動人的滋味留在餐桌上。從餡料比例到火候掌握，我們講究每一道細節，只為端出外酥內嫩的好味道。</p><div class="grid sm:grid-cols-3 gap-5 mt-8 text-sm"><div><i data-lucide="leaf" class="text-[#b76b38] mb-3"></i><strong>在地嚴選</strong><p class="text-[#84766a] mt-2">選用台灣在地豬肉</p></div><div><i data-lucide="hand-heart" class="text-[#b76b38] mb-3"></i><strong>每日手作</strong><p class="text-[#84766a] mt-2">用心包製新鮮風味</p></div><div><i data-lucide="flame" class="text-[#b76b38] mb-3"></i><strong>黃金火候</strong><p class="text-[#84766a] mt-2">煎出酥香金黃底皮</p></div></div></div></div><div class="container-wide mt-20 grid grid-cols-3 gap-4 border-t border-b border-[#e8dfd3] py-8 text-center"><div><p class="serif text-2xl md:text-4xl">10,000<span class="text-lg">+</span></p><p class="text-xs md:text-sm text-[#84766a] mt-2">每日售出顆數*</p></div><div class="border-x border-[#e8dfd3]"><p class="serif text-2xl md:text-4xl">100%</p><p class="text-xs md:text-sm text-[#84766a] mt-2">現點現煎*</p></div><div><p class="serif text-2xl md:text-4xl">30<span class="text-lg">年</span></p><p class="text-xs md:text-sm text-[#84766a] mt-2">工藝傳承*</p></div></div><p class="container-wide text-xs text-[#988a7d] mt-3">*以上數字為網站設計示範資料，正式上線前請替換為實際營運數據。</p></section>
+<section id="menu" class="py-20 bg-white"><div class="container-wide"><div class="text-center"><p class="section-kicker mb-3">OUR MENU</p><h2 class="text-3xl md:text-4xl">每一口，都是講究</h2><p class="mt-4 text-[#84766a]">選擇喜歡的餐點，將好味道加入購物車。</p></div><div id="menuTabs" class="flex gap-2 overflow-x-auto py-8 mt-3 justify-start md:justify-center" role="tablist" aria-label="菜單分類"></div><div id="menuGrid" class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6" aria-live="polite"></div></div></section>
+<section id="gifts" class="py-20 md:py-28"><div class="container-wide grid md:grid-cols-2 gap-10 md:gap-16 items-center"><div class="order-2 md:order-1"><p class="section-kicker mb-4">FROZEN COLLECTION</p><h2 class="text-3xl md:text-4xl leading-snug">把職人好味道，<br>帶回家的餐桌。</h2><p class="mt-6 text-[#746457] leading-8">招牌招財鍋貼禮盒，50 顆滿載心意。無論家常聚餐、節慶送禮，都能分享酥香美味。</p><div class="mt-6 space-y-3 text-sm"><p class="flex items-center gap-3"><i data-lucide="snowflake" class="w-5 text-[#b76b38]"></i>急速冷凍鎖住鮮味（示範產品設定）</p><p class="flex items-center gap-3"><i data-lucide="clock-3" class="w-5 text-[#b76b38]"></i>約 8 分鐘料理提案，依包裝說明加熱</p><p class="flex items-center gap-3"><i data-lucide="gift" class="w-5 text-[#b76b38]"></i>家庭共享與節慶送禮皆適宜</p></div><p class="serif text-3xl mt-8">NT$ 680 <span class="text-sm text-[#84766a] font-normal">/ 50 入</span></p><button id="giftAdd" class="btn-primary mt-5">加入購物車 <span aria-hidden="true">＋</span></button></div><div class="order-1 md:order-2 relative"><img src="https://images.unsplash.com/photo-1541696432-82c6da8ce7bf?auto=format&fit=crop&w=1200&q=85" class="w-full h-[370px] md:h-[510px] object-cover rounded-md" alt="手工餃類美食擺盤" loading="lazy"><div class="absolute top-5 left-5 bg-[#faf6ef] text-[#38291f] px-4 py-2 text-xs tracking-widest">THE PERFECT GIFT</div></div></div></section>
+<section id="locations" class="py-20 bg-white"><div class="container-wide"><div class="text-center mb-10"><p class="section-kicker mb-3">FIND US</p><h2 class="text-3xl md:text-4xl">在城市裡，遇見好味道</h2><p class="mt-4 text-[#84766a]">門市資訊為示範資料，請於正式上線前確認。</p></div><div class="grid lg:grid-cols-[.9fr_1.1fr] gap-8"><div><div id="locationTabs" class="flex gap-3 mb-6" role="tablist" aria-label="門市選擇"></div><div id="locationDetail" class="border border-[#e8dfd3] p-6 md:p-8 rounded-md"></div></div><div class="rounded-md overflow-hidden min-h-[340px] bg-[#eee7dd] relative"><iframe id="locationMap" title="門市地圖" class="w-full h-full min-h-[340px]" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe><div class="absolute bottom-4 left-4 bg-white/95 px-4 py-2 rounded text-xs shadow">Google Maps · 示範地點</div></div></div></div></section>
+<section id="faq" class="py-20"><div class="container-wide max-w-3xl"><div class="text-center mb-9"><p class="section-kicker mb-3">FAQ</p><h2 class="text-3xl md:text-4xl">常見問題</h2></div><div id="faqList" class="border-t border-[#d9ccbd]"></div></div></section>
+</main>
+<footer id="contact" class="bg-[#38291f] text-[#f7eee4] pt-16 pb-8"><div class="container-wide"><div class="grid md:grid-cols-3 gap-12 pb-12"><div><h2 class="serif text-3xl tracking-widest">鍋淬</h2><p class="tracking-[.3em] text-xs mt-1">GUOCUI</p><p class="mt-5 leading-7 text-[#d8c9ba] text-sm">一口金黃，一份講究。<br>以食物的溫度，款待每一次相聚。</p><div class="flex gap-4 mt-6 text-sm"><a href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" class="hover:text-[#e8a46f]">IG</a><a href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook" class="hover:text-[#e8a46f]">FB</a><a href="https://line.me/" target="_blank" rel="noopener noreferrer" aria-label="LINE" class="hover:text-[#e8a46f]">LINE</a></div></div><div><h3 class="font-semibold mb-5">快速導覽</h3><div class="grid grid-cols-2 gap-4 text-sm text-[#d8c9ba]"><a href="#story">品牌故事</a><a href="#menu">線上點餐</a><a href="#gifts">冷凍禮盒</a><a href="#locations">門市據點</a><a href="#faq">常見問題</a><button id="privacyButton" class="text-left">隱私權政策</button></div></div><div><h3 class="font-semibold mb-5">訂閱品牌消息</h3><p class="text-sm text-[#d8c9ba] mb-5">獲得新品消息與季節限定提案。</p><form id="newsletterForm" class="flex gap-2"><label class="sr-only" for="newsletterEmail">電子郵件</label><input id="newsletterEmail" type="email" class="field text-[#38291f]" placeholder="輸入電子郵件" required><button class="bg-[#b76b38] px-4 rounded text-white shrink-0" type="submit" aria-label="訂閱電子報"><i data-lucide="arrow-right"></i></button></form><p class="text-xs text-[#d8c9ba] mt-3">展示版不會儲存或寄送您的電子郵件。</p></div></div><div class="border-t border-white/20 pt-6 flex flex-col sm:flex-row justify-between gap-3 text-xs text-[#bda99a]"><p>© <span id="year"></span> GUOCUI. All rights reserved.</p><p>品牌、價格、地址與商品內容均為網站展示用途。</p></div></div></footer>
+<div id="backdrop" class="overlay fixed inset-0 z-50 bg-black/55" aria-hidden="true"></div>
+<aside id="cartDrawer" class="drawer fixed right-0 top-0 bottom-0 z-[60] w-full max-w-[460px] bg-[#faf6ef] shadow-2xl flex flex-col" role="dialog" aria-modal="true" aria-labelledby="cartTitle" aria-hidden="true"><div class="flex justify-between items-center p-6 border-b border-[#e8dfd3]"><h2 id="cartTitle" class="text-2xl">您的購物車</h2><button id="cartClose" aria-label="關閉購物車"><i data-lucide="x"></i></button></div><div id="cartItems" class="flex-1 overflow-y-auto p-6 space-y-5"></div><div class="border-t border-[#e8dfd3] p-6"><div class="flex justify-between text-lg font-semibold mb-4"><span>合計</span><span id="cartTotal">NT$ 0</span></div><p class="text-xs text-[#84766a] mb-4">展示價格，未包含可能產生的運費。</p><button id="checkoutButton" class="btn-primary w-full">前往結帳</button></div></aside>
+<div id="checkoutModal" class="hidden fixed inset-0 z-[70] p-4 flex items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="checkoutTitle"><div class="absolute inset-0 bg-black/65" id="checkoutBackdrop"></div><div class="relative bg-[#faf6ef] rounded-md w-full max-w-lg max-h-[90vh] overflow-y-auto p-6 md:p-8"><button id="checkoutClose" class="absolute top-5 right-5" aria-label="關閉結帳視窗"><i data-lucide="x"></i></button><div id="checkoutFormView"><p class="section-kicker mb-2">CHECKOUT</p><h2 id="checkoutTitle" class="text-2xl mb-6">確認您的訂單</h2><form id="checkoutForm" class="space-y-4"><fieldset><legend class="text-sm font-semibold mb-2">取餐方式</legend><div class="flex flex-wrap gap-4 text-sm"><label><input type="radio" name="method" value="外帶" checked> 外帶</label><label><input type="radio" name="method" value="內用"> 內用</label><label><input type="radio" name="method" value="宅配"> 宅配</label></div></fieldset><div><label for="customerName" class="block text-sm mb-1">聯絡姓名 *</label><input id="customerName" name="name" class="field" required maxlength="50" autocomplete="name"></div><div><label for="customerPhone" class="block text-sm mb-1">聯絡電話 *</label><input id="customerPhone" name="phone" type="tel" class="field" required pattern="[0-9+()\-\s]{8,20}" title="請輸入 8 至 20 位電話號碼" autocomplete="tel"></div><div><label for="customerEmail" class="block text-sm mb-1">電子郵件（選填）</label><input id="customerEmail" name="email" type="email" class="field" autocomplete="email"></div><div id="shippingAddressWrap" class="hidden"><label for="shippingAddress" class="block text-sm mb-1">宅配地址 *</label><input id="shippingAddress" name="address" class="field" autocomplete="street-address"></div><p class="text-xs text-[#84766a]">示範流程：不會實際送出訂單、安排配送或收取款項。</p><div class="border-t border-[#e8dfd3] pt-4 flex justify-between font-semibold"><span>訂單金額</span><span id="checkoutTotal"></span></div><button class="btn-primary w-full" type="submit">確認建立模擬訂單</button></form></div><div id="checkoutSuccess" class="hidden text-center py-10"><i data-lucide="check-circle-2" class="w-16 h-16 text-[#b76b38] mx-auto mb-5"></i><h2 class="text-3xl mb-4">訂單已建立</h2><p class="text-[#746457] leading-7">這是模擬訂單，沒有傳送至門市。<br>感謝體驗鍋淬線上點餐！</p><p id="orderReference" class="mt-4 text-sm"></p><button id="successClose" class="btn-primary mt-7">返回網站</button></div></div></div>
+<div id="toast" role="status" aria-live="polite" class="toast fixed bottom-6 left-1/2 -translate-x-1/2 z-[90] bg-[#38291f] text-white px-6 py-3 rounded shadow-lg text-sm text-center max-w-[90vw]"></div>
+<div id="privacyModal" class="hidden fixed inset-0 z-[75] bg-black/60 p-4 items-center justify-center" role="dialog" aria-modal="true" aria-labelledby="privacyTitle"><div class="bg-[#faf6ef] p-7 rounded max-w-lg w-full relative"><button id="privacyClose" class="absolute right-5 top-5" aria-label="關閉隱私權說明"><i data-lucide="x"></i></button><h2 id="privacyTitle" class="text-2xl mb-4">隱私權說明（展示版）</h2><p class="leading-8 text-sm">本網站為前端示範作品。購物車資料僅保存在您目前瀏覽器的 localStorage；結帳表單不會傳送到伺服器，電子報表單也不會儲存電子郵件。第三方圖片、字型、圖示與地圖服務可能依其政策處理連線資訊。正式商用前應建立完整隱私權政策與資料處理機制。</p><button id="privacyDone" class="btn-primary mt-6">了解</button></div></div>
 <script>
-// ===== 1. 餐廳資料庫 =====
-// 距離為以 AI3（三重路 19-2）為中心的概估值，請依實際情況修正。
-// googleMapUrl 使用 Google 地圖搜尋連結，點擊後會以店名搜尋。
-const mapUrl = q => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q);
-const RESTAURANTS = [
-  { id:"rest_001", name:"樂法 Le Phu", distanceMeters:300, hasAC:true,
-    categories:["漢堡/美式","健康餐/沙拉"], googleMapUrl:mapUrl("樂法 Le Phu 南港"), priceRange:"$" },
-  { id:"rest_002", name:"朱記餡餅粥店 (南港環球店)", distanceMeters:1200, hasAC:true,
-    categories:["麵","飯","鍋貼/水餃"], googleMapUrl:mapUrl("朱記餡餅粥 南港環球店"), priceRange:"$$" },
-  { id:"rest_003", name:"麻布茶房 南港中信店", distanceMeters:650, hasAC:true,
-    categories:["飯"], googleMapUrl:mapUrl("麻布茶房 南港中信店"), priceRange:"$$" },
-  { id:"rest_004", name:"gonna 共樂遊 南港店", distanceMeters:650, hasAC:true,
-    categories:["健康餐/沙拉","麵"], googleMapUrl:mapUrl("gonna共樂遊 南港店"), priceRange:"$$" },
-  { id:"rest_005", name:"涮嘴 南港店", distanceMeters:700, hasAC:true,
-    categories:["鍋物","飯"], googleMapUrl:mapUrl("涮嘴 南港店"), priceRange:"$$" },
-  { id:"rest_006", name:"Coppii Lumii 冉冉生活", distanceMeters:900, hasAC:true,
-    categories:["麵","漢堡/美式"], googleMapUrl:mapUrl("Coppii Lumii living coffee 南港"), priceRange:"$$" }
+'use strict';
+const image=(id)=>`https://images.unsplash.com/${id}?auto=format&fit=crop&w=900&q=85`;
+const products=[
+{id:'p1',cat:'鍋貼',name:'招牌鮮肉鍋貼',desc:'台灣豬肉與鮮甜高麗菜，外酥內嫩。',price:95,tag:'人氣 NO.1',img:image('photo-1563245372-f21724e3856d')},
+{id:'p2',cat:'鍋貼',name:'韭香鮮肉鍋貼',desc:'清香韭菜與多汁肉餡，香氣飽滿。',price:100,tag:'爆汁',img:image('photo-1541696432-82c6da8ce7bf')},
+{id:'p3',cat:'鍋貼',name:'椒麻香辣鍋貼',desc:'花椒香氣與微辣尾韻，層次鮮明。',price:110,tag:'🌶 微辣',img:image('photo-1563245372-f21724e3856d')},
+{id:'p4',cat:'鍋貼',name:'鮮蔬菇香鍋貼',desc:'鮮菇與時蔬交織的清爽滋味。',price:95,tag:'蔬食',img:image('photo-1541696432-82c6da8ce7bf')},
+{id:'p5',cat:'水餃',name:'經典高麗菜水餃',desc:'薄皮包裹鮮甜內餡，溫潤順口。',price:90,tag:'經典',img:image('photo-1563245372-f21724e3856d')},
+{id:'p6',cat:'水餃',name:'鮮蝦手工水餃',desc:'鮮蝦彈牙，搭配鮮肉的濃郁滋味。',price:135,tag:'嚴選',img:image('photo-1541696432-82c6da8ce7bf')},
+{id:'p7',cat:'湯飲',name:'酸辣湯',desc:'酸香微辣，暖心又開胃。',price:55,tag:'人氣',img:image('photo-1547592180-85f173990554')},
+{id:'p8',cat:'湯飲',name:'暖心玉米濃湯',desc:'玉米甘甜與滑順濃郁口感。',price:50,tag:'暖心',img:image('photo-1547592180-85f173990554')},
+{id:'p9',cat:'湯飲',name:'冷泡烏龍茶',desc:'清爽回甘，搭配鍋貼恰到好處。',price:45,tag:'無糖',img:image('photo-1544787219-7f47ccb76574')},
+{id:'p10',cat:'小菜',name:'黃金泡菜',desc:'爽脆微酸，襯托鍋貼的鮮香。',price:55,tag:'推薦',img:image('photo-1547592180-85f173990554')},
+{id:'p11',cat:'小菜',name:'涼拌小黃瓜',desc:'蒜香清脆，清爽解膩。',price:45,tag:'清爽',img:image('photo-1512621776951-a57141f2eefd')},
+{id:'p12',cat:'小菜',name:'滷香豆干',desc:'慢滷入味，鹹香適口。',price:50,tag:'經典',img:image('photo-1512621776951-a57141f2eefd')},
+{id:'gift',cat:'禮盒',name:'招牌招財鍋貼禮盒 50 入',desc:'將職人手藝帶回家，分享每一份心意。',price:680,tag:'冷凍宅配',img:image('photo-1541696432-82c6da8ce7bf')}
 ];
-const CATEGORIES = ["麵","飯","鍋貼/水餃","漢堡/美式","湯包/小吃","健康餐/沙拉","鍋物"];
-const WHEEL_COLORS = [0xff6a3d,0xffb400,0x34a853,0x4285f4,0xb25ee6,0xe94f8a,0x00acc1,0x8bc34a];
-
-// ===== 2. Three.js 初始化 =====
-const container = document.getElementById("canvas-container");
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(45, innerWidth/innerHeight, 0.1, 100);
-camera.position.set(0, 0, 11);
-const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
-renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-renderer.setSize(innerWidth, innerHeight);
-container.appendChild(renderer.domElement);
-
-scene.add(new THREE.AmbientLight(0xffffff, 0.75));
-const dl = new THREE.DirectionalLight(0xffffff, 0.9);
-dl.position.set(4, 6, 8); scene.add(dl);
-
-const stage = new THREE.Group();          // 整體視角（可拖曳）
-stage.rotation.x = -0.35;
-scene.add(stage);
-let wheel = null;                          // 目前輪盤 group
-let sectors = [];                          // 目前輪盤對應的餐廳
-
-function layoutCamera() {
-  camera.aspect = innerWidth/innerHeight;
-  const narrow = innerWidth < 760;
-  stage.position.set(narrow ? 0 : 1.6, narrow ? 2.2 : 0, 0);
-  camera.position.z = narrow ? 14 : 11;
-  camera.updateProjectionMatrix();
-  renderer.setSize(innerWidth, innerHeight);
-}
-addEventListener("resize", layoutCamera);
-
-// 指針（固定於輪盤頂端，指向圓心）
-const pointer = new THREE.Mesh(new THREE.ConeGeometry(0.28, 0.7, 24),
-  new THREE.MeshStandardMaterial({ color:0xffffff, emissive:0x553300 }));
-pointer.position.set(0, 4.35, 0.5); pointer.rotation.z = Math.PI; stage.add(pointer);
-
-// ===== 3. 動態輪盤生成 =====
-const R = 3.8;
-function makeLabel(text) {
-  const c = document.createElement("canvas"); c.width = 512; c.height = 128;
-  const g = c.getContext("2d");
-  let size = 56;
-  g.font = `bold ${size}px "Microsoft JhengHei","PingFang TC",sans-serif`;
-  while (g.measureText(text).width > 470 && size > 20) { size -= 2; g.font = `bold ${size}px "Microsoft JhengHei","PingFang TC",sans-serif`; }
-  g.textAlign = "center"; g.textBaseline = "middle";
-  g.lineWidth = 6; g.strokeStyle = "rgba(0,0,0,.55)"; g.strokeText(text, 256, 64);
-  g.fillStyle = "#fff"; g.fillText(text, 256, 64);
-  const tex = new THREE.CanvasTexture(c); tex.anisotropy = 4;
-  return tex;
-}
-function disposeWheel() {
-  if (!wheel) return;
-  wheel.traverse(o => { if (o.geometry) o.geometry.dispose();
-    if (o.material) { if (o.material.map) o.material.map.dispose(); o.material.dispose(); } });
-  stage.remove(wheel); wheel = null;
-}
-function buildWheel(list) {
-  const prevRot = wheel ? wheel.rotation.z : 0;
-  disposeWheel(); sectors = list;
-  wheel = new THREE.Group();
-  const n = list.length;
-  if (n === 0) { wheel.rotation.z = prevRot; stage.add(wheel); return; }
-  const step = Math.PI * 2 / n;
-
-  const base = new THREE.Mesh(new THREE.CylinderGeometry(R+0.25, R+0.25, 0.4, 64),
-    new THREE.MeshStandardMaterial({ color:0x222640, metalness:.5, roughness:.4 }));
-  base.rotation.x = Math.PI/2; base.position.z = -0.25; wheel.add(base);
-
-  list.forEach((r, i) => {
-    const sec = new THREE.Mesh(new THREE.CircleGeometry(R, 48, i*step, step),
-      new THREE.MeshStandardMaterial({ color: WHEEL_COLORS[i % WHEEL_COLORS.length], side:THREE.DoubleSide, roughness:.5 }));
-    wheel.add(sec);
-    const mid = i*step + step/2;
-    const lw = Math.min(R*0.78, 2*R*0.62*Math.sin(Math.min(step/2, Math.PI/2)) * 1.6 + 0.8);
-    const label = new THREE.Mesh(new THREE.PlaneGeometry(R*0.78, R*0.78/4),
-      new THREE.MeshBasicMaterial({ map: makeLabel(r.name), transparent:true }));
-    label.position.set(Math.cos(mid)*R*0.58, Math.sin(mid)*R*0.58, 0.02);
-    label.rotation.z = mid;
-    wheel.add(label);
-    if (n > 1) { // 分隔線
-      const line = new THREE.Mesh(new THREE.PlaneGeometry(R, 0.04), new THREE.MeshBasicMaterial({ color:0xffffff }));
-      line.position.set(Math.cos(i*step)*R/2, Math.sin(i*step)*R/2, 0.03); line.rotation.z = i*step; wheel.add(line);
-    }
-  });
-  const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.45, 0.3, 32),
-    new THREE.MeshStandardMaterial({ color:0xffffff, metalness:.6, roughness:.3 }));
-  hub.rotation.x = Math.PI/2; hub.position.z = 0.1; wheel.add(hub);
-
-  wheel.rotation.z = prevRot;
-  stage.add(wheel);
-}
-
-// ===== 4. 篩選邏輯 =====
-const catsEl = document.getElementById("cats");
-CATEGORIES.forEach(c => {
-  const l = document.createElement("label"); l.className = "opt";
-  l.innerHTML = `<input type="checkbox" value="${c}" checked>${c}`;
-  catsEl.appendChild(l);
-});
-const spinBtn = document.getElementById("spin-btn");
-function getFiltered() {
-  const maxD = +document.querySelector('input[name="dist"]:checked').value;
-  const needAC = document.getElementById("ac").checked;
-  const chosen = [...catsEl.querySelectorAll("input:checked")].map(i => i.value);
-  return RESTAURANTS.filter(r => r.distanceMeters <= maxD && (!needAC || r.hasAC)
-    && r.categories.some(c => chosen.includes(c)));
-}
-let current = [];
-function refresh() {
-  current = getFiltered();
-  document.getElementById("count").innerHTML = `符合條件：<b>${current.length}</b> 間餐廳`;
-  document.getElementById("warn").textContent = current.length ? "" : "⚠️ 沒有符合條件的餐廳，請放寬篩選條件";
-  spinBtn.disabled = current.length === 0 || spinning;
-  buildWheel(current);
-}
-document.getElementById("ui-container").addEventListener("change", refresh);
-
-// ===== 5. 轉動動畫（Ease-Out）=====
-let spinning = false, spinStart = 0, spinFrom = 0, spinDelta = 0, winner = null;
-const SPIN_MS = 3000;
-const easeOut = t => 1 - Math.pow(1 - t, 3);
-const TAU = Math.PI * 2;
-
-function startSpin() {
-  if (spinning || !current.length) return;
-  closeModal();
-  const n = current.length, step = TAU / n;
-  const idx = Math.floor(Math.random() * n);
-  winner = current[idx];
-  const mid = idx*step + step/2;
-  const target = Math.PI/2 - mid;                      // 讓該扇區中心對準頂端指針
-  const cur = wheel.rotation.z;
-  const forward = (((target - cur) % TAU) + TAU) % TAU;
-  spinFrom = cur; spinDelta = forward + TAU * 6;       // 至少多轉 6 圈
-  spinStart = performance.now(); spinning = true; spinBtn.disabled = true;
-}
-spinBtn.addEventListener("click", startSpin);
-
-// ===== 6. 彩帶粒子 =====
-let confetti = null;
-function burst() {
-  const N = 220, pos = new Float32Array(N*3), col = new Float32Array(N*3), vel = [];
-  for (let i = 0; i < N; i++) {
-    pos.set([0, 0, 1], i*3);
-    const a = Math.random()*TAU, s = 3 + Math.random()*5;
-    vel.push(new THREE.Vector3(Math.cos(a)*s, Math.sin(a)*s + 3, (Math.random()-.3)*4));
-    const c = new THREE.Color(WHEEL_COLORS[i % WHEEL_COLORS.length]); col.set([c.r,c.g,c.b], i*3);
-  }
-  const g = new THREE.BufferGeometry();
-  g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
-  g.setAttribute("color", new THREE.BufferAttribute(col, 3));
-  const m = new THREE.PointsMaterial({ size:0.18, vertexColors:true, transparent:true, opacity:1 });
-  const pts = new THREE.Points(g, m); pts.frustumCulled = false; stage.add(pts);
-  confetti = { pts, vel, life: 0 };
-}
-function updateConfetti(dt) {
-  if (!confetti) return;
-  confetti.life += dt;
-  const p = confetti.pts.geometry.attributes.position;
-  confetti.vel.forEach((v, i) => {
-    v.y -= 9 * dt;
-    p.setXYZ(i, p.getX(i)+v.x*dt, p.getY(i)+v.y*dt, p.getZ(i)+v.z*dt);
-  });
-  p.needsUpdate = true;
-  confetti.pts.material.opacity = Math.max(0, 1 - confetti.life / 2.4);
-  if (confetti.life > 2.4) {
-    stage.remove(confetti.pts); confetti.pts.geometry.dispose(); confetti.pts.material.dispose(); confetti = null;
-  }
-}
-
-// ===== 7. 結果視窗 =====
-const modal = document.getElementById("result-modal");
-function showResult(r) {
-  document.getElementById("r-name").textContent = r.name;
-  document.getElementById("r-dist").textContent =
-    `${r.distanceMeters} 公尺，步行約 ${Math.max(1, Math.round(r.distanceMeters/80))} 分鐘　${r.priceRange}`;
-  const tags = [...(r.hasAC ? ["有冷氣"] : ["無冷氣"]), ...r.categories];
-  document.getElementById("r-tags").innerHTML = tags.map(t => `<span class="tag">${t}</span>`).join("");
-  document.getElementById("r-map").href = r.googleMapUrl;
-  modal.classList.remove("hidden");
-}
-function closeModal() { modal.classList.add("hidden"); }
-document.getElementById("r-again").addEventListener("click", startSpin);
-document.getElementById("r-filter").addEventListener("click", closeModal);
-modal.addEventListener("click", e => { if (e.target === modal) closeModal(); });
-
-// ===== 8. 拖曳視角 =====
-let drag = null;
-renderer.domElement.addEventListener("pointerdown", e => { drag = { x:e.clientX, y:e.clientY }; });
-addEventListener("pointerup", () => drag = null);
-addEventListener("pointermove", e => {
-  if (!drag) return;
-  stage.rotation.y = THREE.MathUtils.clamp(stage.rotation.y + (e.clientX-drag.x)*0.005, -0.8, 0.8);
-  stage.rotation.x = THREE.MathUtils.clamp(stage.rotation.x + (e.clientY-drag.y)*0.005, -0.9, 0.3);
-  drag = { x:e.clientX, y:e.clientY };
-});
-
-// ===== 主迴圈 =====
-let last = performance.now();
-function animate(now) {
-  requestAnimationFrame(animate);
-  const dt = Math.min((now - last)/1000, 0.05); last = now;
-  if (wheel) {
-    if (spinning) {
-      const t = Math.min((now - spinStart) / SPIN_MS, 1);
-      wheel.rotation.z = spinFrom + spinDelta * easeOut(t);
-      if (t >= 1) {
-        spinning = false; spinBtn.disabled = current.length === 0;
-        burst(); setTimeout(() => showResult(winner), 700);
-      }
-    } else {
-      wheel.rotation.z += dt * 0.15;                   // 微弱待機旋轉
-    }
-  }
-  updateConfetti(dt);
-  renderer.render(scene, camera);
-}
-layoutCamera();
-refresh();
-requestAnimationFrame(animate);
+const categories=[['鍋貼','招牌鍋貼'],['水餃','精選水餃'],['湯飲','湯品 / 飲料'],['小菜','經典小菜']];
+const stores=[{name:'台北旗艦店',short:'旗艦店',address:'台北市中正區忠孝西路一段 49 號（示範地址）',phone:'02-0000-0000',hours:'每日 11:00–21:00',map:'台北車站'},{name:'信義概念店',short:'信義店',address:'台北市信義區松壽路 20 號（示範地址）',phone:'02-0000-0000',hours:'每日 11:30–21:30',map:'台北101'}];
+const faqs=[['如何線上點餐？','選擇餐點並加入購物車，點擊「前往結帳」即可體驗模擬下單流程。展示網站尚未串接真實訂單系統。'],['冷凍鍋貼如何保存？','建議依正式商品包裝標示的冷凍溫度、保存期限與加熱方式操作。展示版尚無經驗證的保存期限資訊。'],['可以使用外送平台嗎？','網站展示 Uber Eats 與 foodpanda 兩種平台，實際合作門市與配送範圍需於正式營運時確認。'],['可以選擇內用、外帶或宅配嗎？','模擬結帳支援三種選項；正式服務是否開放、運費及配送條件須以門市公告為準。']];
+const $=(s)=>document.querySelector(s), $$=(s)=>document.querySelectorAll(s), money=(n)=>`NT$ ${n.toLocaleString('zh-TW')}`;
+let cart={};try{const saved=JSON.parse(localStorage.getItem('guocui-cart')||'{}');if(saved&&typeof saved==='object'&&!Array.isArray(saved)){for(const [id,q] of Object.entries(saved)){if(products.some(p=>p.id===id)&&Number.isInteger(q)&&q>0&&q<=99)cart[id]=q;}}}catch(e){cart={}}
+let currentCategory='鍋貼', currentStore=0, toastTimer, lastFocus=null;
+function icons(){if(window.lucide)lucide.createIcons()}
+function save(){try{localStorage.setItem('guocui-cart',JSON.stringify(cart))}catch(e){}updateCart()}
+function toast(message){const el=$('#toast');el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2600)}
+function addItem(id){cart[id]=Math.min(99,(cart[id]||0)+1);save();toast(`${products.find(p=>p.id===id).name} 已加入購物車`)}
+function renderMenu(){const tabs=$('#menuTabs');tabs.innerHTML=categories.map(([id,label])=>`<button type="button" role="tab" aria-selected="${id===currentCategory}" data-cat="${id}" class="tab shrink-0 border border-[#e8dfd3] px-5 py-3 rounded text-sm ${id===currentCategory?'active':''}">${label}</button>`).join('');$('#menuGrid').innerHTML=products.filter(p=>p.cat===currentCategory).map(p=>`<article class="border border-[#eee5da] rounded-md overflow-hidden bg-[#faf6ef] flex flex-col"><div class="relative"><img class="food-image" src="${p.img}" alt="${p.name}示意照片" loading="lazy"><span class="absolute top-3 left-3 bg-white/95 text-[#9d562c] px-3 py-1 text-xs rounded">${p.tag}</span></div><div class="p-4 md:p-5 flex flex-col flex-1"><h3 class="text-base md:text-lg font-semibold">${p.name}</h3><p class="text-xs md:text-sm leading-6 text-[#84766a] mt-2 flex-1">${p.desc}</p><div class="flex flex-wrap justify-between items-center gap-3 mt-5"><span class="font-semibold">${money(p.price)}</span><button type="button" data-add="${p.id}" class="bg-[#38291f] text-white px-3 py-2 text-xs rounded hover:bg-[#65452e]">加入購物車 ＋</button></div></div></article>`).join('')}
+function cartSum(){return Object.entries(cart).reduce((sum,[id,q])=>sum+(products.find(p=>p.id===id)?.price||0)*q,0)}
+function updateCart(){const count=Object.values(cart).reduce((a,b)=>a+b,0);$('#cartCount').textContent=count;$('#cartTotal').textContent=money(cartSum());$('#checkoutButton').disabled=count===0;const entries=Object.entries(cart);$('#cartItems').innerHTML=entries.length?entries.map(([id,q])=>{const p=products.find(x=>x.id===id);return `<div class="flex gap-4"><img src="${p.img}" alt="${p.name}" class="w-24 h-24 object-cover rounded"><div class="flex-1 min-w-0"><h3 class="font-semibold text-sm">${p.name}</h3><p class="text-[#b76b38] mt-1 text-sm">${money(p.price*q)}</p><div class="flex justify-between items-center mt-3"><div class="flex border border-[#d8cbbd] rounded items-center"><button data-minus="${id}" class="px-3 py-1" aria-label="減少${p.name}數量">−</button><span class="text-sm min-w-6 text-center">${q}</span><button data-plus="${id}" class="px-3 py-1" aria-label="增加${p.name}數量">+</button></div><button data-remove="${id}" class="text-xs underline text-[#84766a]">移除</button></div></div></div>`}).join(''):'<div class="text-center py-20 text-[#84766a]"><p class="text-4xl mb-5">♡</p><p>購物車目前空空的</p><p class="text-sm mt-2">去挑選喜歡的鍋貼吧！</p></div>';icons()}
+function lockScroll(){document.body.classList.toggle('no-scroll',$('#cartDrawer').classList.contains('open')||!$('#checkoutModal').classList.contains('hidden')||!$('#privacyModal').classList.contains('hidden'))}
+function openCart(){lastFocus=document.activeElement;$('#cartDrawer').classList.add('open');$('#cartDrawer').setAttribute('aria-hidden','false');$('#backdrop').classList.add('open');lockScroll();$('#cartClose').focus()}
+function closeCart(restore=true){$('#cartDrawer').classList.remove('open');$('#cartDrawer').setAttribute('aria-hidden','true');$('#backdrop').classList.remove('open');lockScroll();if(restore)lastFocus?.focus()}
+function openCheckout(){if(!Object.keys(cart).length)return;closeCart(false);$('#checkoutFormView').classList.remove('hidden');$('#checkoutSuccess').classList.add('hidden');$('#checkoutTotal').textContent=money(cartSum());$('#checkoutModal').classList.remove('hidden');lockScroll();$('#checkoutClose').focus()}
+function closeCheckout(){ $('#checkoutModal').classList.add('hidden');lockScroll();$('#cartTrigger').focus()}
+function renderStores(){ $('#locationTabs').innerHTML=stores.map((s,i)=>`<button role="tab" aria-selected="${i===currentStore}" data-store="${i}" class="px-5 py-3 text-sm rounded border ${i===currentStore?'bg-[#38291f] text-white border-[#38291f]':'border-[#e8dfd3]'}">${s.short}</button>`).join('');const s=stores[currentStore];$('#locationDetail').innerHTML=`<p class="section-kicker mb-3">WELCOME TO GUOCUI</p><h3 class="text-2xl mb-6">${s.name}</h3><div class="space-y-5 text-sm"><p class="flex gap-3"><i data-lucide="map-pin" class="shrink-0 w-5 text-[#b76b38]"></i>${s.address}</p><p class="flex gap-3"><i data-lucide="phone" class="shrink-0 w-5 text-[#b76b38]"></i>${s.phone}</p><p class="flex gap-3"><i data-lucide="clock" class="shrink-0 w-5 text-[#b76b38]"></i>${s.hours}</p></div><div class="mt-8 border-t border-[#e8dfd3] pt-5"><p class="text-xs text-[#84766a] mb-3">外送合作平台（示意）</p><div class="flex gap-2 flex-wrap"><span class="border rounded px-3 py-2 text-sm font-semibold">Uber Eats</span><span class="border rounded px-3 py-2 text-sm font-semibold">foodpanda</span></div></div><a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.map)}" target="_blank" rel="noopener noreferrer" class="inline-block mt-6 text-sm underline text-[#9d562c]">查看示範地圖位置 ↗</a>`;$('#locationMap').src=`https://maps.google.com/maps?q=${encodeURIComponent(s.map)}&t=&z=14&ie=UTF8&iwloc=&output=embed`;icons()}
+function renderFaq(){ $('#faqList').innerHTML=faqs.map(([q,a],i)=>`<div class="faq-item border-b border-[#d9ccbd]"><button class="faq-question w-full flex justify-between gap-4 text-left py-5 font-semibold" aria-expanded="false" aria-controls="faqAnswer${i}"><span>${q}</span><i data-lucide="chevron-down" class="faq-chevron shrink-0 transition-transform"></i></button><div class="faq-answer pb-5 text-sm leading-8 text-[#746457]" id="faqAnswer${i}">${a}</div></div>`).join('');icons()}
+$('#menuTabs').addEventListener('click',e=>{const btn=e.target.closest('[data-cat]');if(btn){currentCategory=btn.dataset.cat;renderMenu()}});
+$('#menuGrid').addEventListener('click',e=>{const btn=e.target.closest('[data-add]');if(btn)addItem(btn.dataset.add)});
+$('#giftAdd').addEventListener('click',()=>addItem('gift'));
+$('#cartTrigger').addEventListener('click',openCart);$('#cartClose').addEventListener('click',()=>closeCart());$('#backdrop').addEventListener('click',()=>closeCart());
+$('#cartItems').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.plus){cart[b.dataset.plus]=Math.min(99,cart[b.dataset.plus]+1)}else if(b.dataset.minus){const id=b.dataset.minus;cart[id]--;if(cart[id]<=0)delete cart[id]}else if(b.dataset.remove){delete cart[b.dataset.remove]}save()});
+$('#checkoutButton').addEventListener('click',openCheckout);$('#checkoutClose').addEventListener('click',closeCheckout);$('#checkoutBackdrop').addEventListener('click',closeCheckout);$('#successClose').addEventListener('click',closeCheckout);
+$$('input[name="method"]').forEach(r=>r.addEventListener('change',()=>{const shipping=$('input[name="method"]:checked').value==='宅配';$('#shippingAddressWrap').classList.toggle('hidden',!shipping);$('#shippingAddress').required=shipping}));
+$('#checkoutForm').addEventListener('submit',e=>{e.preventDefault();if(!e.currentTarget.reportValidity())return;const total=cartSum();if(total<=0)return;const ref='DEMO-'+Date.now().toString().slice(-8);cart={};save();$('#checkoutFormView').classList.add('hidden');$('#checkoutSuccess').classList.remove('hidden');$('#orderReference').textContent=`模擬訂單編號：${ref}｜${money(total)}`;e.currentTarget.reset();$('#shippingAddressWrap').classList.add('hidden');$('#shippingAddress').required=false;$('#successClose').focus()});
+$('#locationTabs').addEventListener('click',e=>{const b=e.target.closest('[data-store]');if(b){currentStore=Number(b.dataset.store);renderStores()}});
+$('#faqList').addEventListener('click',e=>{const btn=e.target.closest('.faq-question');if(!btn)return;const item=btn.parentElement,expanded=item.classList.toggle('open');btn.setAttribute('aria-expanded',String(expanded))});
+$('#mobileToggle').addEventListener('click',()=>{const hidden=$('#mobileNav').classList.toggle('hidden');$('#mobileToggle').setAttribute('aria-expanded',String(!hidden))});$$('#mobileNav a').forEach(a=>a.addEventListener('click',()=>{$('#mobileNav').classList.add('hidden');$('#mobileToggle').setAttribute('aria-expanded','false')}));
+$('#newsletterForm').addEventListener('submit',e=>{e.preventDefault();if(e.currentTarget.reportValidity()){toast('訂閱功能展示完成，未實際寄送資料');e.currentTarget.reset()}});
+function closePrivacy(){$('#privacyModal').classList.add('hidden');$('#privacyModal').classList.remove('flex');lockScroll();$('#privacyButton').focus()}
+$('#privacyButton').addEventListener('click',()=>{$('#privacyModal').classList.remove('hidden');$('#privacyModal').classList.add('flex');lockScroll();$('#privacyClose').focus()});$('#privacyClose').addEventListener('click',closePrivacy);$('#privacyDone').addEventListener('click',closePrivacy);$('#privacyModal').addEventListener('click',e=>{if(e.target.id==='privacyModal')closePrivacy()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!$('#privacyModal').classList.contains('hidden'))closePrivacy();else if(!$('#checkoutModal').classList.contains('hidden'))closeCheckout();else if($('#cartDrawer').classList.contains('open'))closeCart()}if(e.key==='Tab'){const dialog=!$('#privacyModal').classList.contains('hidden')?$('#privacyModal'):!$('#checkoutModal').classList.contains('hidden')?$('#checkoutModal'):$('#cartDrawer').classList.contains('open')?$('#cartDrawer'):null;if(!dialog)return;const els=[...dialog.querySelectorAll('button:not(:disabled),input:not(:disabled),select:not(:disabled),a[href]')].filter(x=>x.getClientRects().length);if(!els.length)return;const first=els[0],last=els[els.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}});
+$('#year').textContent=new Date().getFullYear();renderMenu();renderStores();renderFaq();updateCart();if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',icons);else icons();window.addEventListener('load',icons);
 </script>
-</body>
-</html>
+</body></html>
