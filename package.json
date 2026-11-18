@@ -1,0 +1,18 @@
+{
+  "name": "potstickers",
+  "version": "1.0.0",
+  "description": "鍋淬 GUOCUI 官方網站與線上訂單",
+  "private": true,
+  "scripts": {
+    "start": "http-server . -p 8080 -c-1 -o",
+    "dev": "http-server . -p 8080 -c-1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HarryPuTaiwan/potstickers.git"
+  },
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}
