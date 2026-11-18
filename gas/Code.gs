@@ -30,12 +30,75 @@ const PRICE_LIST = {
   gift: { name: '招牌招財鍋貼禮盒 50 入', price: 680 },
 };
 const METHODS = ['外帶', '內用', '宅配'];
-const ORDER_HEADERS = ['訂單編號', '建立時間', '狀態', '取餐方式', '姓名', '電話', 'Email', '宅配地址', '品項摘要', '數量合計', '訂單金額', '備註'];
+const ORDER_HEADERS = ['訂單編號', '建立時間', '狀態', '取餐方式', '姓名', '電話', 'Email', '宅配地址', '品項摘要', '數量合計', '訂單金額', '備註', '更新時間'];
 const ITEM_HEADERS = ['訂單編號', '品項代碼', '品名', '單價', '數量', '小計'];
+const STATUSES = ['已收到', '製作中', '可取餐', '已完成', '已取消'];
+const STATUS_COL = 3;   // C 欄：狀態
+const UPDATED_COL = 13; // M 欄：更新時間
+// 舊資料的狀態值對應到新狀態
+const LEGACY_STATUS = { '新訂單': '已收到', '已確認': '已收到' };
 
 // ===== 進入點 =====
-function doGet() {
+function doGet(e) {
+  const p = (e && e.parameter) || {};
+  if (p.action === 'lookup') return lookup_(p);
   return json_({ ok: true, service: 'guocui-orders' });
+}
+
+/** 試算表被手動編輯時，狀態欄一變就自動更新「更新時間」（簡易觸發器，不需額外授權） */
+function onEdit(e) {
+  try {
+    const r = e && e.range;
+    if (!r) return;
+    const sh = r.getSheet();
+    if (sh.getName() !== CONFIG.ORDER_SHEET) return;
+    if (r.getRow() < 2 || r.getColumn() > STATUS_COL || r.getLastColumn() < STATUS_COL) return;
+    sh.getRange(r.getRow(), UPDATED_COL, r.getNumRows(), 1).setValue(new Date());
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+// ===== 訂單查詢（電話 + 訂單編號）=====
+function lookup_(p) {
+  const notFound = () => json_({ ok: false, error: '找不到訂單，請確認訂單編號與電話是否正確。' });
+  const orderId = String(p.orderId || '').trim().toUpperCase();
+  const phone = digits_(p.phone);
+  if (!orderId || phone.length < 8) return notFound();
+
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sh = ss.getSheetByName(CONFIG.ORDER_SHEET);
+  if (!sh || sh.getLastRow() < 2) return notFound();
+
+  const rows = sh.getRange(2, 1, sh.getLastRow() - 1, ORDER_HEADERS.length).getValues();
+  const row = rows.filter(r => String(r[0]).toUpperCase() === orderId)[0];
+  // 編號錯或電話錯回應相同，避免被用來探測訂單
+  if (!row || digits_(row[5]) !== phone) return notFound();
+
+  const fmt = v => (v instanceof Date ? Utilities.formatDate(v, CONFIG.TIMEZONE, 'yyyy/MM/dd HH:mm') : String(v || ''));
+  const rawStatus = String(row[STATUS_COL - 1] || '').trim();
+  const status = LEGACY_STATUS[rawStatus] || rawStatus || '已收到';
+
+  const itemSheet = ss.getSheetByName(CONFIG.ITEM_SHEET);
+  let items = [];
+  if (itemSheet && itemSheet.getLastRow() >= 2) {
+    items = itemSheet.getRange(2, 1, itemSheet.getLastRow() - 1, ITEM_HEADERS.length).getValues()
+      .filter(r => String(r[0]).toUpperCase() === orderId)
+      .map(r => ({ name: String(r[2]), price: Number(r[3]), qty: Number(r[4]), subtotal: Number(r[5]) }));
+  }
+  return json_({
+    ok: true,
+    orderId: String(row[0]),
+    status: status,
+    total: Number(row[10]),
+    createdAt: fmt(row[1]),
+    updatedAt: fmt(row[UPDATED_COL - 1] || row[1]),
+    items: items,
+  });
+}
+
+function digits_(v) {
+  return String(v == null ? '' : v).replace(/\D/g, '');
 }
 
 function doPost(e) {
@@ -53,8 +116,8 @@ function doPost(e) {
       const now = new Date();
       order.id = nextOrderId_(now);
       orderSheet.appendRow([
-        order.id, now, '新訂單', order.method, order.name, "'" + order.phone, order.email,
-        order.address, order.summary, order.count, order.total, order.note,
+        order.id, now, '已收到', order.method, order.name, "'" + order.phone, order.email,
+        order.address, order.summary, order.count, order.total, order.note, now,
       ]);
       order.items.forEach(it => itemSheet.appendRow([order.id, it.id, it.name, it.price, it.qty, it.price * it.qty]));
     } finally {
@@ -159,9 +222,14 @@ function json_(obj) {
 /** 在編輯器手動執行一次，用來授權並建立工作表 */
 function setup() {
   const ss = SpreadsheetApp.getActiveSpreadsheet();
-  sheet_(ss, CONFIG.ORDER_SHEET, ORDER_HEADERS);
+  const orderSheet = sheet_(ss, CONFIG.ORDER_SHEET, ORDER_HEADERS);
   sheet_(ss, CONFIG.ITEM_SHEET, ITEM_HEADERS);
-  // 狀態欄下拉選單
-  const rule = SpreadsheetApp.newDataValidation().requireValueInList(['新訂單', '已確認', '製作中', '已完成', '已取消']).build();
-  ss.getSheetByName(CONFIG.ORDER_SHEET).getRange('C2:C').setDataValidation(rule);
+  // 舊工作表補上「更新時間」表頭
+  const head = orderSheet.getRange(1, UPDATED_COL);
+  if (!head.getValue()) {
+    head.setValue(ORDER_HEADERS[UPDATED_COL - 1]).setFontWeight('bold').setBackground('#38291f').setFontColor('#ffffff');
+  }
+  // 狀態欄下拉選單（allowInvalid：保留舊資料的「新訂單」「已確認」不報錯）
+  const rule = SpreadsheetApp.newDataValidation().requireValueInList(STATUSES).setAllowInvalid(true).build();
+  orderSheet.getRange('C2:C').setDataValidation(rule);
 }
